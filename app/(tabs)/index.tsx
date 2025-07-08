@@ -1,21 +1,21 @@
-import { Image, Pressable, Text, TextInput, TouchableOpacity, View, ScrollView, Alert, Modal } from "react-native";
-import { styles } from "../../styles/homepage.js"
+import { Platform, Image, Pressable, Text, TextInput, TouchableOpacity, View, ScrollView, Alert, Modal } from "react-native";
+import { styles } from "@/styles/homepage.js"
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { productData } from '@/data/products.js';
+import { useIsFocused } from '@react-navigation/native';
+
 
 export default function Index() {
 
   const [searchingItem, setSearchingItem] = useState("");
-  const [allProducts] = useState([
-    { id: 1, name: "Apple iPhone 13 128 GB Beyaz", rating: 4.8, comment: 25308, price: 32.749, image: require("../../assets/images/phone1.webp") },
-    { id: 2, name: "Samsung Galaxy A06 128 GB 4 GB Ram (Samsung Türkiye Garantili) Siyah", rating: 4.5, comment: 638, price: 6.199, image: require("../../assets/images/phone2.webp") },
-    { id: 3, name: "Redmi Note 14 Pro 12GB 512GB (Xiaomi Türkiye Garantili)", rating: 4.6, comment: 322, price: 18.249, image: require("../../assets/images/phone3.webp") },
-    { id: 4, name: "Samsung Galaxy S24 Fe 256 GB 8 GB Ram (Samsung Türkiye Garantili) Grafit", rating: 4.8, comment: 599, price: 25.999, image: require("../../assets/images/phone4.webp") },
-    { id: 5, name: "Apple iPhone 15 128 GB Siyah", rating: 4.8, comment: 5445, price: 49.199, image: require("../../assets/images/phone5.webp") },
-    { id: 6, name: "Xiaomi Redmi Note 14 8GB 128GB (Xiaomi Türkiye Garantili)", rating: 4.6, comment: 237, price: 11.099, image: require("../../assets/images/phone6.webp") },
-  ]);
+  const [allProducts] = useState(productData);
   const [products, setProducts] = useState(allProducts);
   const [modalVisible, setModalVisible] = useState(false);
+  const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
+  const [basket, setBasket] = useState<{ [key: number]: number }>({});
+  const isFocused = useIsFocused();
 
   const search = () => {
     const filteredProducts = allProducts.filter(product => (
@@ -31,7 +31,85 @@ export default function Index() {
     setSearchingItem("");
   }
 
+  const addBasket = async (productId: number) => {
+    const newBasket = {
+      ...basket,
+      [productId]: (basket[productId] || 0) + 1,
+    };
+    setBasket(newBasket);
+
+    Alert.alert("Ürün sepete eklendi");
+
+    if (Platform.OS === "web") {
+      localStorage.setItem("basket", JSON.stringify(newBasket));
+    } else {
+      await AsyncStorage.setItem("basket", JSON.stringify(newBasket));
+    }
+  }
+
+  const addFavorites = async (productId: number) => {
+    const newFavorites = {
+      ...favorites,
+      [productId]: !favorites[productId],
+    };
+    setFavorites(newFavorites);
+
+    if (Platform.OS === "web") {
+      localStorage.setItem("favorites", JSON.stringify(newFavorites));
+    } else {
+      await AsyncStorage.setItem("favorites", JSON.stringify(newFavorites));
+    }
+  }
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (Platform.OS === "web") {
+        const storedFavorites = localStorage.getItem("favorites");
+        if (storedFavorites) {
+          setFavorites(JSON.parse(storedFavorites));
+        }
+      } else {
+        const storedFavorites = await AsyncStorage.getItem("favorites");
+        if (storedFavorites) {
+          setFavorites(JSON.parse(storedFavorites));
+        }
+      }
+    };
+    const loadBasket = async () => {
+      if (Platform.OS === "web") {
+        const storedBasket = localStorage.getItem("basket");
+        if (storedBasket) {
+          setBasket(JSON.parse(storedBasket));
+        }
+      } else {
+        const storedBasket = await AsyncStorage.getItem("basket");
+        if (storedBasket) {
+          setBasket(JSON.parse(storedBasket));
+        }
+      }
+    };
+
+    /*** 
+    const resetStorage = async () => {
+      if (Platform.OS === "web") {
+        localStorage.clear();
+      } else {
+        await AsyncStorage.clear();
+      }
+      Alert.alert("Tüm veriler silindi!");
+    };
+    resetStorage();
+    ***/
+
+    if (isFocused) {
+      loadFavorites();
+      loadBasket();
+    }
+  }, [isFocused]);
+
+
   return (
+
     <View style={styles.container}>
       <View style={styles.header}>
         <Pressable>
@@ -122,24 +200,27 @@ export default function Index() {
 
       <ScrollView contentContainerStyle={[styles.productContainer, { paddingBottom: 70 }]}>
         {products.map((product) => (
-          <View style={styles.product}>
+          <View style={styles.product} key={product.id}>
             <View>
+              <Pressable onPress={() => addFavorites(product.id)} style={styles.favoriteButton}>
+                <Ionicons name="heart" size={30} style={{ color: favorites[product.id] ? "#ff3930" : "#75797a" }} />
+              </Pressable>
               <Image source={product.image} style={styles.productImage} />
               <Text>
                 {product.name}
               </Text>
               <View style={styles.rating}>
-                <Ionicons name="star" color={"#d9e42e"} size={20}/>
+                <Ionicons name="star" color={"#d9e42e"} size={20} />
                 <Text>{product.rating}</Text>
                 <Text style={styles.commentNum}>{product.comment}</Text>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => addBasket(product.id)}>
               <Text style={styles.priceText}>{product.price},00 TL</Text>
-              <Ionicons name="basket" color={"#fff"} size={20}/>
+              <Ionicons name="basket" color={"#fff"} size={20} />
             </TouchableOpacity>
-  
+
           </View>
         ))}
       </ScrollView>

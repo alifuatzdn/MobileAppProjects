@@ -7,13 +7,13 @@ export const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingVertical: 12,
     backgroundColor: "#e8eced",
   },
   searchBar: {
-    minWidth: 200,
-    maxHeight: 40,
+    minWidth: 300,
+    minHeight: 30,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#75797a",
