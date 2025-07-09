@@ -9,7 +9,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
 export default function cart() {
-  const [isChecked, setIsChecked] = useState(false);
   const [basket, setBasket] = useState<{ [key: number]: number }>({});
   const [allProducts, setAllProducts] = useState(productData);
   const isFocused = useIsFocused();
@@ -69,7 +68,7 @@ export default function cart() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerText}>SEPETİM</Text>
+          <Text style={styles.headerText}>Sepetim</Text>
         </View>
 
         <View style={styles.emptyBasket}>
@@ -86,7 +85,7 @@ export default function cart() {
 
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>SEPETİM</Text>
+        <Text style={styles.headerText}>Sepetim</Text>
         <Text style={styles.productNum}>({basketItems.length} ürün)</Text>
       </View>
 

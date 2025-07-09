@@ -1,10 +1,10 @@
-import { Platform, Image, Pressable, Text, TextInput, TouchableOpacity, View, ScrollView, Alert, Modal } from "react-native";
-import { styles } from "@/styles/wishlist.js"
-import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { productData } from '@/data/products.js';
+import { styles } from "@/styles/wishlist.js";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Alert, Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
 
@@ -74,8 +74,35 @@ export default function Index() {
         }
       }
     };
+    const loadBasket = async () => {
+      if (Platform.OS === "web") {
+        const storedBasket = localStorage.getItem("basket");
+        if (storedBasket) {
+          setBasket(JSON.parse(storedBasket));
+        }
+      } else {
+        const storedBasket = await AsyncStorage.getItem("basket");
+        if (storedBasket) {
+          setBasket(JSON.parse(storedBasket));
+        }
+      }
+    };
+
+    /*** 
+    const resetStorage = async () => {
+      if (Platform.OS === "web") {
+        localStorage.clear();
+      } else {
+        await AsyncStorage.clear();
+      }
+      Alert.alert("Tüm veriler silindi!");
+    };
+    resetStorage();
+    ***/
+
     if (isFocused) {
       loadFavorites();
+      loadBasket();
     }
   }, [isFocused]);
 

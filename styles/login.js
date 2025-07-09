@@ -30,19 +30,22 @@ export const styles = StyleSheet.create({
   },
   register: {
     marginTop: 15,
-    flexDirection: "row", 
+    flexDirection: "row",
     alignItems: "center",
     marginBottom: 50,
   },
   registerText: {
+    fontSize: 16,
     fontWeight: "bold",
     textDecorationLine: "underline",
 
   },
   loginAlert: {
     textAlign: "center",
-    fontSize: 18,
-    marginBottom: 20
+    fontSize: 16,
+    marginBottom: 50,
+    flexWrap: "wrap",
+    paddingHorizontal: 20,
   },
   googleLogin: {
     flexDirection: "row",
@@ -53,9 +56,11 @@ export const styles = StyleSheet.create({
     padding: 20,
     borderColor: "#22c1f4",
     backgroundColor: "#eff3f4",
+    minWidth: 250,
+    marginBottom: 20,
   },
   googleLoginText: {
-    fontSize: 20,
+    fontSize: 18,
   },
   googleLoginImg: {
     width: 25,
