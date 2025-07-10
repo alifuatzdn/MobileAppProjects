@@ -6,6 +6,8 @@ export default function _layout() {
     <Stack>
       <Stack.Screen name='addresses' options={{ headerShown: false }} />
       <Stack.Screen name='addAddress' options={{ headerShown: false }} />
+      <Stack.Screen name='orders' options={{ headerShown: false }} />
+      <Stack.Screen name='orderDetails' options={{ headerShown: false }} />
     </Stack>
   )
 }

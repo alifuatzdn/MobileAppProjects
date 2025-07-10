@@ -108,21 +108,21 @@ export default function Profile() {
         </View>
         <View>
 
-          <TouchableOpacity style={stylesProfile.choices}>
+          <TouchableOpacity style={stylesProfile.choices} onPress={() => { router.push("/(profile)/orders") }}>
             <View style={stylesProfile.choicesInside}>
               <Ionicons name='bag-outline' size={20} />
               <Text style={stylesProfile.choicesText}>Siparişlerim</Text>
             </View>
             <Ionicons name='chevron-forward-outline' size={20} />
           </TouchableOpacity>
-          <TouchableOpacity style={stylesProfile.choices} onPress={() => {router.push("/(profile)/addresses")}} >
+          <TouchableOpacity style={stylesProfile.choices} onPress={() => { router.push("/(profile)/addresses") }} >
             <View style={stylesProfile.choicesInside}>
               <Ionicons name='location-outline' size={20} />
               <Text style={stylesProfile.choicesText}>Adreslerim</Text>
             </View>
             <Ionicons name='chevron-forward-outline' size={20} />
           </TouchableOpacity>
-          <TouchableOpacity style={stylesProfile.choices} onPress={() => {router.push("/(tabs)/wishlist")}} >
+          <TouchableOpacity style={stylesProfile.choices} onPress={() => { router.push("/(tabs)/wishlist") }} >
             <View style={stylesProfile.choicesInside}>
               <Ionicons name='heart-outline' size={20} />
               <Text style={stylesProfile.choicesText}>Beğendiklerim</Text>
