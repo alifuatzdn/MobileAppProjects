@@ -1,0 +1,83 @@
+# Genel Gitignore Bilgisi
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# Dependencies
+node_modules/
+packages/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# Local Environment Files
+.env
+.env*.local
+appsettings.json
+appsettings.*.json
+
+# TypeScript
+*.tsbuildinfo
+
+# Build ve Yayın Dosyaları
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Kullanıcı Ayarları
+*.user
+*.suo
+
+# Log Dosyaları
+*.log
+
+# Temporary Files
+*.tmp
+*.temp
+
+# Migration Dosyaları (isteğe bağlı)
+Migrations/
+
+# IDE ve İşletim Sistemi Dosyaları
+Thumbs.db
+desktop.ini
+
+# Entity Framework Dosyaları
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+# Test Sonuçları
+TestResults/
+coverage/
+*.trx
+*.coverage
+
+# Proje Spesifik Dosyalar
+api/Properties/launchSettings.json
+app-example
