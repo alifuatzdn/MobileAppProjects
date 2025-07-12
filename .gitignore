@@ -81,3 +81,4 @@ coverage/
 # Proje Spesifik Dosyalar
 api/Properties/launchSettings.json
 app-example
+.fake
