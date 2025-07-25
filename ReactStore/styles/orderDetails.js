@@ -78,6 +78,7 @@ export const styles = StyleSheet.create({
     borderColor: "#75797a",
     padding: 10,
     borderRadius: 10,
+    backgroundColor: "#fff",
   },
   cargoPart: {
     borderBottomWidth: 1,
@@ -107,6 +108,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     marginTop: 10,
+    backgroundColor: "#fff"
   },
   productImg: {
     resizeMode: "contain",
@@ -119,9 +121,9 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#75797a",
     borderRadius: 10,
+    backgroundColor: "#fff",
   },
   productInfo: {
-    flexDirection: "row",
     paddingBottom: 30,
     padding: 10,
     borderTopWidth: 1,
@@ -148,9 +150,10 @@ export const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: "row",
+    marginBottom: 10,
   },
   productDetailsContainer: {
-    backgroundColor: "#f0fcf0",
+    backgroundColor: "#ebf7fa",
     borderRadius: 10,
   },
   productDetails: {
@@ -171,7 +174,7 @@ export const styles = StyleSheet.create({
   productDetailsInfo: {
     fontWeight: "bold",
     fontsize: 15,
-    color: "#0aa222",
+    color: "#22c1f4",
   },
   deliveryInfo: {
     flexDirection: "row",

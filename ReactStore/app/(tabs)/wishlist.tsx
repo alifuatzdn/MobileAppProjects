@@ -1,112 +1,105 @@
-import { productData } from '@/data/products.js';
+import { addFavorites, deleteFavorites, getAllFavorites } from '@/Services/favoriteService';
 import { styles } from "@/styles/wishlist.js";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Alert, Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FavoriteResponse } from '@/Services/favoriteService';
+import { addBasket } from '@/Services/cartService';
+import { useAuth } from '@/Context/AuthContext';
+import { router } from 'expo-router';
+import { useBasket } from '@/Context/CartContext';
 
 export default function Index() {
 
   const [searchingItem, setSearchingItem] = useState("");
-  const [allProducts] = useState(productData);
-  const [products, setProducts] = useState(allProducts);
+  const [favorites, setFavorites] = useState<FavoriteResponse[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
-  const [basket, setBasket] = useState<{ [key: number]: number }>({});
+  const [displayProducts, setDisplayProducts] = useState<FavoriteResponse[]>([]);
   const isFocused = useIsFocused();
+  const [addedProducts, setAddedProducts] = useState<{ [key: number]: boolean }>({})
+  const { isLoggedIn } = useAuth();
+  const { refreshBasket } = useBasket();
+
+  const getFavorites = async () => {
+    if (isLoggedIn) {
+      try {
+        const favoriteResponse = await getAllFavorites();
+        setFavorites(favoriteResponse);
+        setDisplayProducts(favoriteResponse);
+      } catch {
+        console.error("Favori ürünler alınırken hata oluştu.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    getFavorites();
+  }, [isFocused]);
+
+  const addUserBasket = async (id: number) => {
+    await addBasket(id);
+    refreshBasket();
+    setAddedProducts(prevState => ({
+      ...prevState,
+      [id]: true,
+    }));
+
+    setTimeout(() => {
+      setAddedProducts(prevState => ({
+        ...prevState,
+        [id]: false,
+      }));
+    }, 1000);
+  }
+
+  const toggleFavorite = async (product: FavoriteResponse) => {
+    try {
+      if (favorites.some((fav) => fav.productId === product.productId)) {
+        await deleteFavorites(product.productId);
+        setFavorites((prevFavorites) =>
+          prevFavorites.filter((fav) => fav.productId !== product.productId)
+        );
+        await getFavorites();
+      } else {
+        await addFavorites(product.productId);
+        setFavorites((prevFavorites) => [...prevFavorites, product]);
+      }
+    } catch (e) {
+      console.error("Favori durumu değiştirilirken bir hata oluştu:", e);
+    }
+  };
 
   const search = () => {
-    const filteredProducts = allProducts.filter(product => (
-      product.name.toLowerCase().includes(searchingItem.toLowerCase())
+    const filteredProducts = favorites.filter(favorite => (
+      favorite.product.name.toLowerCase().includes(searchingItem.toLowerCase())
     ));
     console.log(filteredProducts.length);
     if (filteredProducts.length === 0) {
       Alert.alert("Aradığınız ürün bulunamadı. Tüm ürünler tekrar listeleniyor...");
-      setProducts(allProducts);
+      setDisplayProducts(favorites);
     } else {
-      setProducts(filteredProducts);
+      setDisplayProducts(filteredProducts);
     }
     setSearchingItem("");
   }
 
-  const addBasket = async (productId: number) => {
-    const newBasket = {
-      ...basket,
-      [productId]: (basket[productId] || 0) + 1,
-    };
-    setBasket(newBasket);
+  if (!isLoggedIn) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerLogout}>
+          <Text style={styles.headerText}>Favorilerim</Text>
+        </View>
 
-    Alert.alert("Ürün sepete eklendi");
-
-    if (Platform.OS === "web") {
-      localStorage.setItem("basket", JSON.stringify(newBasket));
-    } else {
-      await AsyncStorage.setItem("basket", JSON.stringify(newBasket));
-    }
-  }
-
-  const addFavorites = async (productId: number) => {
-    const newFavorites = {
-      ...favorites,
-      [productId]: !favorites[productId],
-    };
-    setFavorites(newFavorites);
-
-    if (Platform.OS === "web") {
-      localStorage.setItem("favorites", JSON.stringify(newFavorites));
-    } else {
-      await AsyncStorage.setItem("favorites", JSON.stringify(newFavorites));
-    }
-  }
-
-  useEffect(() => {
-    const loadFavorites = async () => {
-      if (Platform.OS === "web") {
-        const storedFavorites = localStorage.getItem("favorites");
-        if (storedFavorites) {
-          setFavorites(JSON.parse(storedFavorites));
-        }
-      } else {
-        const storedFavorites = await AsyncStorage.getItem("favorites");
-        if (storedFavorites) {
-          setFavorites(JSON.parse(storedFavorites));
-        }
-      }
-    };
-    const loadBasket = async () => {
-      if (Platform.OS === "web") {
-        const storedBasket = localStorage.getItem("basket");
-        if (storedBasket) {
-          setBasket(JSON.parse(storedBasket));
-        }
-      } else {
-        const storedBasket = await AsyncStorage.getItem("basket");
-        if (storedBasket) {
-          setBasket(JSON.parse(storedBasket));
-        }
-      }
-    };
-
-    /*** 
-    const resetStorage = async () => {
-      if (Platform.OS === "web") {
-        localStorage.clear();
-      } else {
-        await AsyncStorage.clear();
-      }
-      Alert.alert("Tüm veriler silindi!");
-    };
-    resetStorage();
-    ***/
-
-    if (isFocused) {
-      loadFavorites();
-      loadBasket();
-    }
-  }, [isFocused]);
-
-  const favoriteProducts = products.filter(product => favorites[product.id]);
+        <View style={styles.logout}>
+          <Text style={styles.logoutText}>Favorilerinizi görmek için giriş yapmanız gerekmektedir!</Text>
+          <TouchableOpacity style={styles.logoutButton} onPress={() => router.push("/(tabs)/profile")}>
+            <Text style={styles.logoutButtonText}>Hemen Giriş Yap</Text>
+          </TouchableOpacity>
+        </View>
+      </View >
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -145,8 +138,8 @@ export default function Index() {
             <TouchableOpacity
               style={styles.modalList}
               onPress={() => {
-                const sorted = [...products].sort((a, b) => a.price - b.price);
-                setProducts(sorted);
+                const sorted = [...favorites].sort((a, b) => a.product.price - b.product.price);
+                setDisplayProducts(sorted);
                 setModalVisible(false);
               }}
             >
@@ -155,8 +148,8 @@ export default function Index() {
             <TouchableOpacity
               style={styles.modalList}
               onPress={() => {
-                const sorted = [...products].sort((a, b) => b.price - a.price);
-                setProducts(sorted);
+                const sorted = [...favorites].sort((a, b) => b.product.price - a.product.price);
+                setDisplayProducts(sorted);
                 setModalVisible(false);
               }}
             >
@@ -165,8 +158,8 @@ export default function Index() {
             <TouchableOpacity
               style={styles.modalList}
               onPress={() => {
-                const sorted = [...products].sort((a, b) => a.rating - b.rating);
-                setProducts(sorted);
+                const sorted = [...favorites].sort((a, b) => a.product.rating - b.product.rating);
+                setDisplayProducts(sorted);
                 setModalVisible(false);
               }}
             >
@@ -175,8 +168,8 @@ export default function Index() {
             <TouchableOpacity
               style={styles.modalList}
               onPress={() => {
-                const sorted = [...products].sort((a, b) => b.rating - a.rating);
-                setProducts(sorted);
+                const sorted = [...favorites].sort((a, b) => b.product.rating - a.product.rating);
+                setDisplayProducts(sorted);
                 setModalVisible(false);
               }}
             >
@@ -190,29 +183,31 @@ export default function Index() {
       </Modal>
 
       <ScrollView contentContainerStyle={[styles.productContainer, { paddingBottom: 70 }]}>
-        {favoriteProducts.map((product) => (
-          <View style={styles.product} key={product.id}>
+        {displayProducts.map((favorite) => (
+          <Pressable style={styles.product} key={favorite.product.id} onPress={() => router.push(`/productDetail?id=${favorite.productId}`)}>
             <View>
-              <Pressable onPress={() => addFavorites(product.id)} style={styles.favoriteButton}>
-                <Ionicons name="heart" size={30} style={{ color: favorites[product.id] ? "#ff3930" : "#75797a" }} />
+              <Pressable onPress={() => toggleFavorite(favorite)} style={styles.favoriteButton}>
+                <Ionicons name="heart" size={30} style={{ color: favorites.some((fav) => fav.product.id === favorite.product.id) ? "#ff3930" : "#75797a", }} />
               </Pressable>
-              <Image source={product.image} style={styles.productImage} />
-              <Text>
-                {product.name}
-              </Text>
+              <Image source={{ uri: favorite.product.image }} style={styles.productImage} />
+              <Text numberOfLines={3}>{favorite.product.name}</Text>
               <View style={styles.rating}>
                 <Ionicons name="star" color={"#d9e42e"} size={20} />
-                <Text>{product.rating}</Text>
-                <Text style={styles.commentNum}>{product.comment}</Text>
+                <Text>{favorite.product.rating}</Text>
+                <Text style={styles.commentNum}>1154</Text>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={() => addBasket(product.id)}>
-              <Text style={styles.priceText}>{product.price},00 TL</Text>
-              <Ionicons name="basket" color={"#fff"} size={20} />
+            <TouchableOpacity style={!addedProducts[favorite.productId] ? styles.button : [styles.button, { backgroundColor: "#0aa222" }]} onPress={() => addUserBasket(favorite.productId)}>
+              <Text style={!addedProducts[favorite.productId] ? styles.priceText : [styles.priceText, { color: "#fff" }]}>
+                {!addedProducts[favorite.product.id]
+                  ? `${favorite.product.price.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL`
+                  : "Sepete Eklendi"}
+                {!addedProducts[favorite.productId] && <Ionicons name="basket" color={"#fff"} size={20} />}
+              </Text>
             </TouchableOpacity>
 
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
 

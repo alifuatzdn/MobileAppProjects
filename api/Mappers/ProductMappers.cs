@@ -20,6 +20,7 @@ namespace api.Mappers
                 Price = productModel.Price,
                 Image = productModel.Image,
                 Rating = productModel.Rating,
+                Category = productModel.Category,
                 Comments = productModel.Comments.Select(c => c.ToCommentDto()).ToList()
             };
         }
@@ -30,7 +31,19 @@ namespace api.Mappers
             {
                 Name = ProductDto.Name,
                 Price = ProductDto.Price,
-                Image = ProductDto.Image
+                Image = ProductDto.Image,
+                Category = ProductDto.Category
+            };
+        }
+
+        public static ProductCartDto ToProductCartDto(this Product productModel)
+        {
+            return new ProductCartDto
+            {
+                Id = productModel.Id,
+                Name = productModel.Name,
+                Price = productModel.Price,
+                Image = productModel.Image
             };
         }
     }

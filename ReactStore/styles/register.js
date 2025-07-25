@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   },
   inputs: {
     fontSize: 18,
-    minWidth: 250,
+    width: 250,
     borderWidth: 1,
     marginBottom: 10,
     padding: 10,

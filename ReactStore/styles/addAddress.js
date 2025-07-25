@@ -28,6 +28,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   inputs: {
+    backgroundColor: "#fff",
     fontSize: 18,
     borderWidth: 1,
     marginBottom: 10,

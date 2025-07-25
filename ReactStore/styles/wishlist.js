@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     borderColor: "#75797a",
     flexDirection: "row",
     alignItems: "center",
-    height: 30,
+    height: 40,
   },
   icons: {
     color: "#75797a",
@@ -44,6 +44,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#dcdfe0",
     borderRadius: 30,
+    backgroundColor: "#fff",
   },
   productImage: {
     width: 100,
@@ -59,8 +60,8 @@ export const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: 200,
     fontSize: 12,
-   },
-   button: {
+  },
+  button: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -68,12 +69,12 @@ export const styles = StyleSheet.create({
     backgroundColor: "#22c1f4",
     borderRadius: 15,
     paddingVertical: 10,
-   },
-   priceText: {
+  },
+  priceText: {
     fontWeight: "bold",
     marginRight: 8,
-   },
-   sort: {
+  },
+  sort: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -81,13 +82,13 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderTopWidth: 1,
     borderColor: "#75797a",
-   },
-   sortText: {
+  },
+  sortText: {
     fontSize: 15,
     fontWeight: "500",
     marginLeft: 10,
-   },
-   sortButton: {
+  },
+  sortButton: {
     backgroundColor: "#e8eced",
     borderColor: "#75797a",
     borderWidth: 1,
@@ -97,42 +98,79 @@ export const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 10,
     marginRight: 20,
-   },
-   model: {
+  },
+  model: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-   },
-   modalWindow: {
+  },
+  modalWindow: {
     borderWidth: 1,
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 24,
     minWidth: 220,
     alignItems: "center"
-   },
-   modalText: {
-    fontWeight: "bold", 
-    fontSize: 18, 
+  },
+  modalText: {
+    fontWeight: "bold",
+    fontSize: 18,
     marginBottom: 16
-   },
-   modalCancelText: {
+  },
+  modalCancelText: {
     marginTop: 10,
     color: "#ff3930"
-   },
-   modalList: {
+  },
+  modalList: {
     padding: 5,
     fontSize: 16,
     marginBottom: 5,
     fontWeight: "500"
-   },
-   favorite: {
+  },
+  favorite: {
     color: "#75797a",
-   },
-   favoriteButton: {
+  },
+  favoriteButton: {
     position: "absolute",
     top: 12,
     right: -8,
     zIndex: 10,
-   },
+  },
+  logout: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoutText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 40,
+    textAlign: "center",
+  },
+  logoutButton: {
+    backgroundColor: "#22c1f4",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 50,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 5,
+  },
+  headerLogout: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#e8eced",
+    borderBottomWidth: 1,
+    borderColor: "#75797a",
+    marginBottom: 15,
+    height: 55,
+  },
 })

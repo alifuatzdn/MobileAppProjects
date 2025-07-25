@@ -17,5 +17,7 @@ namespace api.DTOs.Product
         public decimal Price { get; set; }
         [Required]
         public string Image { get; set; } = string.Empty;
+        [Required]
+        public string Category { get; set; } = string.Empty;
     }
 }

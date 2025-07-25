@@ -40,6 +40,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     marginBottom: 10,
+    backgroundColor: "#fff",
   },
   order: {
     borderWidth: 1,
@@ -47,6 +48,7 @@ export const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     marginTop: 10,
+    backgroundColor: "#fff",
   },
   orderImgContainer: {
     borderWidth: 1,

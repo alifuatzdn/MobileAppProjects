@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   },
   searchBar: {
     minWidth: 200,
-    height: 30,
+    height: 40,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#75797a",
@@ -43,6 +43,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#dcdfe0",
     borderRadius: 30,
+    backgroundColor: "#fff",
   },
   productImage: {
     width: 100,
@@ -58,8 +59,8 @@ export const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: 200,
     fontSize: 12,
-   },
-   button: {
+  },
+  button: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -67,12 +68,12 @@ export const styles = StyleSheet.create({
     backgroundColor: "#22c1f4",
     borderRadius: 15,
     paddingVertical: 10,
-   },
-   priceText: {
+  },
+  priceText: {
     fontWeight: "bold",
     marginRight: 8,
-   },
-   sort: {
+  },
+  sort: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -80,13 +81,13 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderTopWidth: 1,
     borderColor: "#75797a",
-   },
-   sortText: {
+  },
+  sortText: {
     fontSize: 15,
     fontWeight: "500",
     marginLeft: 10,
-   },
-   sortButton: {
+  },
+  sortButton: {
     backgroundColor: "#e8eced",
     borderColor: "#75797a",
     borderWidth: 1,
@@ -96,42 +97,68 @@ export const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 10,
     marginRight: 20,
-   },
-   model: {
+  },
+  model: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-   },
-   modalWindow: {
+  },
+  modalWindow: {
     borderWidth: 1,
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 24,
     minWidth: 220,
-    alignItems: "center"
-   },
-   modalText: {
-    fontWeight: "bold", 
-    fontSize: 18, 
-    marginBottom: 16
-   },
-   modalCancelText: {
+    alignItems: "center",
+    borderColor: "#75797a",
+  },
+  modalText: {
+    fontWeight: "bold",
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 25,
+  },
+  modalCancelText: {
     marginTop: 10,
-    color: "#ff3930"
-   },
-   modalList: {
+    color: "#ff3930",
+    alignSelf: "center",
+  },
+  modalList: {
     padding: 5,
     fontSize: 16,
-    marginBottom: 5,
-    fontWeight: "500"
-   },
-   favorite: {
+    marginBottom: 15,
+    fontWeight: "500",
+  },
+  favorite: {
     color: "#75797a",
-   },
-   favoriteButton: {
+  },
+  favoriteButton: {
     position: "absolute",
     top: 12,
     right: -8,
     zIndex: 10,
-   },
+  },
+  model2: {
+    alignItems: "flex-start",
+    height: "93%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderColor: "#75797a",
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+  },
+  modalWindow2: {
+    borderWidth: 0,
+    backgroundColor: "#fff",
+    padding: 24,
+    minWidth: 220,
+    height: "100%",
+  },
+  modalList2: {
+    padding: 5,
+    fontSize: 16,
+    marginBottom: 15,
+    fontWeight: "500",
+    borderBottomWidth: 1,
+    borderColor: "#75797a",
+  },
 })

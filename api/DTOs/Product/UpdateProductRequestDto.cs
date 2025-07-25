@@ -14,6 +14,7 @@ namespace api.DTOs.Product
         [Range(1, 1000000)]
         public decimal Price { get; set; }
         public string Image { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
         public decimal Rating { get; set; }
     }
 }

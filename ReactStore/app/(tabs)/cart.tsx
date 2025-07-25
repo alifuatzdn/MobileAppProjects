@@ -1,70 +1,88 @@
-import { View, Text, Switch, TouchableOpacity, Image, Pressable, ScrollView, Platform } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Pressable, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import { styles } from "@/styles/cart.js"
 import { Ionicons } from '@expo/vector-icons'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { productData } from '@/data/products';
 import { useIsFocused } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { getBasket, deleteBasket, updateBasket } from '@/Services/cartService';
+import { CartResponse } from '@/Services/cartService';
+import { router } from 'expo-router';
+import { useAuth } from '@/Context/AuthContext';
+import { useBasket } from '@/Context/CartContext';
+
 
 export default function cart() {
-  const [basket, setBasket] = useState<{ [key: number]: number }>({});
-  const [allProducts, setAllProducts] = useState(productData);
+  const [basket, setBasket] = useState<CartResponse[]>([]);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
+  const { isLoggedIn } = useAuth();
+  const { refreshBasket } = useBasket();
 
-  const removeItem = async (productID: number) => {
-    const updatedBasket = { ...basket };
-    delete updatedBasket[productID];
-    setBasket(updatedBasket);
-
-    if (Platform.OS === "web") {
-      localStorage.setItem("basket", JSON.stringify(updatedBasket));
-    } else {
-      await AsyncStorage.setItem("basket", JSON.stringify(updatedBasket));
+  const getUserBasket = async () => {
+    if (isLoggedIn) {
+      try {
+        const basketResponse = await getBasket();
+        setBasket(basketResponse);
+      } catch {
+        console.error("Sepetteki ürünler alınırken hata oluştu.");
+      }
     }
   };
 
-  const updateItem = async (productID: number) => {
-    setBasket(prevBasket => ({
-      ...prevBasket,
-      [productID]: (prevBasket[productID] || 0) + 1, // Adedi artır
-    }));
-
-    if (Platform.OS === "web") {
-      localStorage.setItem("basket", JSON.stringify(basket));
-    } else {
-      await AsyncStorage.setItem("basket", JSON.stringify(basket));
+  const deleteUserBasket = async (id: number) => {
+    try {
+      await deleteBasket(id);
+      setBasket((prevBasket) => prevBasket.filter((item) => item.productId !== id));
+      refreshBasket();
+    } catch {
+      console.error("Sepetteki ürün silinirken hata oluştu.");
     }
+  };
 
-  }
+  const updateUserBasket = async (id: number, newQuantity: number) => {
+    try {
+      await updateBasket(id, newQuantity);
+
+      if (newQuantity === 0) {
+        setBasket(prevBasket => prevBasket.filter(item => item.productId !== id));
+        refreshBasket();
+      }
+
+      setBasket((prevBasket) =>
+        prevBasket.map((item) =>
+          item.productId === id ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    } catch (E) {
+      console.error("Sepet güncellenirken bir hata oluştu.", E);
+    }
+  };
 
   useEffect(() => {
-    const loadBasket = async () => {
-      if (Platform.OS === "web") {
-        const storedBasket = await localStorage.getItem("basket");
-        if (storedBasket) {
-          setBasket(JSON.parse(storedBasket));
-        }
-      } else {
-        const storedBasket = await AsyncStorage.getItem("basket");
-        if (storedBasket) {
-          setBasket(JSON.parse(storedBasket));
-        }
-      }
-    };
-    if (isFocused) {
-      loadBasket();
-    }
+    getUserBasket();
   }, [isFocused]);
 
-  const basketItems = allProducts.filter(product => basket[product.id]);
-  const totalPrice = basketItems.reduce((sum, product) => {
-    return sum + product.price * basket[product.id];
-  }, 0);
+  const calculatedTotalPrice = basket.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
-  if (basketItems.length === 0) {
+  if (!isLoggedIn) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerLogout}>
+          <Text style={styles.headerText}>Sepetim</Text>
+        </View>
+
+        <View style={styles.logout}>
+          <Text style={styles.logoutText}>Sepetinizdeki ürünleri görmek için giriş yapmanız gerekmektedir!</Text>
+          <TouchableOpacity style={styles.logoutButton} onPress={() => router.push("/(tabs)/profile")}>
+            <Text style={styles.logoutButtonText}>Hemen Giriş Yap</Text>
+          </TouchableOpacity>
+        </View>
+      </View >
+    );
+  };
+
+  if (basket.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -86,12 +104,12 @@ export default function cart() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Sepetim</Text>
-        <Text style={styles.productNum}>({basketItems.length} ürün)</Text>
+        <Text style={styles.productNum}>({basket.length} ürün)</Text>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 70 }}>
-        {basketItems.map((product) => (
-          <View key={product.id}>
+        {basket.map((basketItem) => (
+          <View key={basketItem.product.id}>
             <View style={styles.sellerInfo}>
               <Text style={styles.seller}>Satıcı: Hepsiburada</Text>
               <Text style={styles.deliveryFee}>Kargo Bedava</Text>
@@ -99,38 +117,45 @@ export default function cart() {
 
             <View>
               <View style={styles.delivery}>
-                <MaterialCommunityIcons name="truck-delivery-outline" size={24} color="#75797a" style={{ marginRight: 5 }} />
-                <Text>Tahmini 14 Temmuz Pazartesi kapında</Text>
+                <View style={{ alignItems: "center", flexDirection: "row", }}>
+                  <MaterialCommunityIcons name="truck-delivery-outline" size={24} color="#75797a" style={{ marginRight: 5 }} />
+                  <Text>Tahmini 14 Temmuz Pazartesi kapında</Text>
+                </View>
+                <Pressable onPress={() => deleteUserBasket(basketItem.product.id)}>
+                  <Ionicons name='trash-outline' color="#ff3930" size={25} />
+                </Pressable>
               </View>
 
               <View style={styles.product}>
                 <View>
                   <View style={styles.productInfo}>
                     <View style={styles.imgContainer}>
-                      <Image source={product.image} style={styles.productImg} />
+                      <Image source={{ uri: basketItem.product.image }} style={styles.productImg} />
                     </View>
                     <View style={{ flexWrap: "wrap", flex: 1 }}>
                       <Text style={styles.phoneName} numberOfLines={2}>
-                        {product.name}
+                        {basketItem.product.name}
                       </Text>
                       <View style={styles.installment}>
                         <MaterialCommunityIcons name='credit-card-outline' color="#850aa2" size={23} />
                         <Text style={styles.installmentText}>Peşin fiyatına 3 x</Text>
-                        <Text style={styles.installmentPrice}>{(product.price / 3).toFixed(3)} TL</Text>
+                        <Text style={styles.installmentPrice}>{(basketItem.product.price / 3).toFixed(3)} TL</Text>
                       </View>
                     </View>
                   </View>
                   <View style={styles.productBottom}>
                     <View style={styles.productSetting}>
-                      <Pressable onPress={() => removeItem(product.id)}>
-                        <Ionicons name='trash-outline' color="#22c1f4" size={20} />
+                      <Pressable onPress={() => updateUserBasket(basketItem.product.id, basketItem.quantity - 1)}>
+                        <Ionicons name='remove-outline' color="#22c1f4" size={25} />
                       </Pressable>
-                      <Text style={styles.number}>{basket[product.id]}</Text>
-                      <Pressable onPress={() => updateItem(product.id)}>
+                      <Text style={styles.number}>{basketItem.quantity}</Text>
+                      <Pressable onPress={() => updateUserBasket(basketItem.product.id, basketItem.quantity + 1)}>
                         <MaterialCommunityIcons name='plus' color="#22c1f4" size={25} />
                       </Pressable>
                     </View>
-                    <Text style={styles.productPrice}>{product.price},00 TL</Text>
+                    <Text style={styles.productPrice}>
+                      {basketItem.product.price.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -139,8 +164,8 @@ export default function cart() {
         ))}
       </ScrollView>
       <View style={styles.pricePanel}>
-        <Text style={styles.priceText}>{(totalPrice).toFixed(3)},00 TL</Text>
-        <TouchableOpacity style={styles.priceButton}>
+        <Text style={styles.priceText}>{calculatedTotalPrice.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL</Text>
+        <TouchableOpacity style={styles.priceButton} onPress={() => router.push({ pathname: "/payment", params: { calculatedTotalPrice } })}>
           <Text style={styles.priceButtonText}>Ödemeye Geç</Text>
         </TouchableOpacity>
       </View>

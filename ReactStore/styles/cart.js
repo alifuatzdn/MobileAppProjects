@@ -44,6 +44,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 5,
     paddingVertical: 10,
+    justifyContent: "space-between",
   },
   product: {
     borderBottomWidth: 1,
@@ -56,9 +57,9 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
   },
   productImg: {
-    maxWidth: 90,
-    maxHeight: 90,
-    resizeMode: "contain"
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
   },
   imgContainer: {
     marginRight: 20,
@@ -68,8 +69,8 @@ export const styles = StyleSheet.create({
     borderColor: "#75797a",
     padding: 3,
     borderRadius: 10,
-    maxWidth: 93,
-    maxHeight: 93,
+    maxWidth: 103,
+    maxHeight: 103,
   },
   phoneName: {
     fontWeight: "bold",
@@ -165,5 +166,42 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
+  },
+  logout: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoutText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 40,
+    textAlign: "center",
+  },
+  logoutButton: {
+    backgroundColor: "#22c1f4",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 50,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 5,
+  },
+  headerLogout: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#e8eced",
+    borderBottomWidth: 1,
+    borderColor: "#75797a",
+    marginBottom: 15,
+    height: 55,
   },
 });

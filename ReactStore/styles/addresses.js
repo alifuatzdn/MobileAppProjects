@@ -23,6 +23,7 @@ export const styles = StyleSheet.create({
     marginRight: 5,
   },
   newAddress: {
+    backgroundColor: "#fff",
     marginTop: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -60,6 +61,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 15,
     padding: 10,
+    backgroundColor: "#fff",
   },
   addressName: {
     flexDirection: "row",
@@ -74,6 +76,10 @@ export const styles = StyleSheet.create({
   addressEdit: {
     marginLeft: 30,
     marginRight: 20,
-    alignSelf: "center",
+    justifyContent: "space-between",
+    borderLeftWidth: 1,
+    borderColor: "#75797a",
+    paddingLeft: 15,
+    marginRight: 6,
   },
 });

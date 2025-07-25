@@ -8,10 +8,12 @@ namespace api.Interfaces
 {
     public interface ICommentRepository
     {
+        Task<bool> UserHasCommentForProductAsync(string userId, int productId);
         Task<List<Comment>> GetAllAsync();
-        Task<Comment> GetByIdAsync(int id);
+        Task<List<Comment>> GetAllForUserAsync(string userId);
+        Task<Comment?> GetByIdAsync(int id);
         Task<Comment> CreateAsync(Comment commentModel);
-        Task<Comment> DeleteAsync(int id);
-        Task<Comment?> UpdateAsync(int id, Comment commentModel);
+        Task<Comment?> DeleteAsync(int id, string userId);
+        Task<Comment?> UpdateAsync(int id, string userId, Comment commentModel);
     }
 }

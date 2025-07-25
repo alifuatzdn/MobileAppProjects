@@ -29,6 +29,8 @@ namespace api.Repository
 
         public async Task<Product?> DeleteAsync(int id)
         {
+            var comments = _context.Comments.Where(c => c.ProductId == id);
+            _context.Comments.RemoveRange(comments);
             var productModel = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
 
             if (productModel == null)
@@ -40,14 +42,23 @@ namespace api.Repository
             await _context.SaveChangesAsync();
             return productModel;
         }
-
         public async Task<List<Product>> GetAllAsync(QueryObject query)
         {
             var products = _context.Products.Include(c => c.Comments).AsQueryable();
 
+            if (query.ProductIds != null && query.ProductIds.Any())
+            {
+                products = products.Where(p => query.ProductIds.Contains(p.Id));
+            }
+
             if (!string.IsNullOrWhiteSpace(query.Name))
             {
                 products = products.Where(p => p.Name.Contains(query.Name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Category))
+            {
+                products = products.Where(p => p.Category.Contains(query.Category));
             }
 
             if (!string.IsNullOrWhiteSpace(query.SortBy))
@@ -65,7 +76,10 @@ namespace api.Repository
 
         public async Task<Product?> GetByIdAsync(int id)
         {
-            return await _context.Products.Include(c => c.Comments).FirstOrDefaultAsync(i => i.Id == id);
+            return await _context.Products
+            .Include(p => p.Comments)
+            .ThenInclude(c => c.User)   
+            .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public Task<bool> ProductExists(int id)
@@ -86,6 +100,7 @@ namespace api.Repository
             existingProduct.Price = productDto.Price;
             existingProduct.Image = productDto.Image;
             existingProduct.Rating = productDto.Rating;
+            existingProduct.Category = productDto.Category;
 
             await _context.SaveChangesAsync();
             return existingProduct;

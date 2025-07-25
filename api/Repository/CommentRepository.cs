@@ -17,6 +17,11 @@ namespace api.Repository
             _context = context;
         }
 
+        public async Task<bool> UserHasCommentForProductAsync(string userId, int productId)
+        {
+            return await _context.Comments.AnyAsync(c => c.UserId == userId && c.ProductId == productId);
+        }
+
         public async Task<Comment> CreateAsync(Comment commentModel)
         {
             await _context.Comments.AddAsync(commentModel);
@@ -24,7 +29,7 @@ namespace api.Repository
             return commentModel;
         }
 
-        public async Task<Comment?> DeleteAsync(int id)
+        public async Task<Comment?> DeleteAsync(int id, string userId)
         {
             var commentModel = await _context.Comments.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -40,15 +45,19 @@ namespace api.Repository
 
         public async Task<List<Comment>> GetAllAsync()
         {
-            return await _context.Comments.ToListAsync();
+            return await _context.Comments.Include(c => c.User).ToListAsync();
         }
 
-        public async Task<Comment> GetByIdAsync(int id)
+        public async Task<List<Comment>> GetAllForUserAsync(string userId)
+        {
+            return await _context.Comments.Where(a => a.UserId == userId).ToListAsync();
+        }
+        public async Task<Comment?> GetByIdAsync(int id)
         {
             return await _context.Comments.FindAsync(id);
         }
 
-        public async Task<Comment?> UpdateAsync(int id, Comment commentModel)
+        public async Task<Comment?> UpdateAsync(int id, string userId, Comment commentModel)
         {
             var existingComment = await _context.Comments.FindAsync(id);
 

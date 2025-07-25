@@ -17,15 +17,18 @@ namespace api.Mappers
                 Id = commentModel.Id,
                 Content = commentModel.Content,
                 CreatedOn = commentModel.CreatedOn,
-                ProductId = commentModel.ProductId
+                UserId = commentModel.UserId,
+                ProductId = commentModel.ProductId,
+                UserName = commentModel.User?.Name + " " + commentModel.User?.Surname
             };
         }
 
-        public static Comment CommentCreateDto(this CreateCommentDto commentDto, int productId)
+        public static Comment CommentCreateDto(this CreateCommentDto commentDto, int productId, string userId)
         {
             return new Comment
             {
                 Content = commentDto.Content,
+                UserId = userId,
                 ProductId = productId
             };
         }
